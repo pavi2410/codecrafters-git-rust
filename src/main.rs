@@ -1,6 +1,7 @@
 use std::io::prelude::*;
 use std::fs;
-use std::fs::{File, Path};
+use std::fs::File;
+use std::path::Path;
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
 use anyhow::Result;
