@@ -62,6 +62,12 @@ fn main() -> Result<()> {
         Commands::HashObject { write, filename } => {
             let content = fs::read(filename)?;
 
+            let blob = {
+                let l1 = format!("blob {}\0", content.len()).as_bytes().to_vec();
+                l1.extend_from_slice(&content[..]);
+                l1
+            };
+
             let mut hasher = Sha1::new();
             hasher.update(&content[..]);
             let sha = hex::encode(hasher.finalize());
