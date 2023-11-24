@@ -1,4 +1,5 @@
 use std::io::prelude::*;
+use std::io::{BufReader, BufRead};
 use std::fs;
 use std::path::Path;
 use clap::{Parser, Subcommand};
@@ -104,7 +105,7 @@ fn main() -> Result<()> {
             // let mut s = String::new();
             // z.read_to_string(&mut s)?;
 
-            println!("{}", object.replace("\x00", "\n"));
+            println!("{}", object.split('\0').nth(0).unwrap());
         }
     }
 
