@@ -33,6 +33,13 @@ enum Commands {
 
         #[clap(required = true)]
         filename: String,
+    },
+
+    LsTree {
+        name_only: bool,
+
+        #[clap(required = true)]
+        tree_sha: String,
     }
 }
 
@@ -86,6 +93,11 @@ fn main() -> Result<()> {
                 
                 fs::write(object_path, compressed)?;
             }
+        }
+
+        Commands::LsTree { name_only, tree_sha } => {
+            dbg!(name_only);
+            dbg!(tree_sha);
         }
     }
 
