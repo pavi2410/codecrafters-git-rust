@@ -104,7 +104,7 @@ fn main() -> Result<()> {
             // let mut s = String::new();
             // z.read_to_string(&mut s)?;
 
-            println!("{}", object);
+            println!("{}", object.replace("\x00", "\n"));
         }
     }
 
