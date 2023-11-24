@@ -62,12 +62,12 @@ fn main() -> Result<()> {
 
             let mut hasher = Sha1::new();
             hasher.update(&content[..]);
-            let sha = hasher.finalize();
+            let sha = hex::encode(hasher.finalize());
 
             println!("{}", sha);
 
             if write {
-                let (dir, file) = hex::encode(sha).split_at(2);
+                let (dir, file) = sha.split_at(2);
                 let mut file = File::new(format!(".git/objects/{}/{}", dir, file))?;
                 file.write_all(&content[..]);
             }
