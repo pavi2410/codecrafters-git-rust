@@ -2,6 +2,7 @@ use std::io::prelude::*;
 use std::fs;
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
+use anyhow::Result;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -23,7 +24,7 @@ enum Commands {
     }
 }
 
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
