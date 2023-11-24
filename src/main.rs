@@ -63,7 +63,7 @@ fn main() -> Result<()> {
             let mut content = fs::read(filename)?;
 
             let blob = {
-                let l1 = format!("blob {}\0", content.len()).as_bytes().to_vec();
+                let mut l1 = format!("blob {}\0", content.len()).as_bytes().to_vec();
                 l1.append(&mut content);
                 l1
             };
