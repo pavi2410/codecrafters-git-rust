@@ -42,7 +42,7 @@ fn main() {
             let mut s = String::new();
             z.read_to_string(&mut s)?;
 
-            print!(s);
+            print!("{s}");
         }
     }
 }
