@@ -36,6 +36,7 @@ enum Commands {
     },
 
     LsTree {
+        #[arg(long)]
         name_only: bool,
 
         #[clap(required = true)]
