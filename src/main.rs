@@ -60,16 +60,16 @@ fn main() -> Result<()> {
         }
 
         Commands::HashObject { write, filename } => {
-            let content = fs::read(filename)?;
+            let mut content = fs::read(filename)?;
 
             let blob = {
                 let l1 = format!("blob {}\0", content.len()).as_bytes().to_vec();
-                l1.extend_from_slice(&content[..]);
+                l1.append(&mut content);
                 l1
             };
 
             let mut hasher = Sha1::new();
-            hasher.update(&content[..]);
+            hasher.update(&blob[..]);
             let sha = hex::encode(hasher.finalize());
 
             println!("{}", sha);
@@ -81,7 +81,7 @@ fn main() -> Result<()> {
                 fs::create_dir_all(object_path.parent().unwrap())?;
 
                 let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
-                e.write_all(&content[..])?;
+                e.write_all(&blob[..])?;
                 let compressed = e.finish()?; 
                 
                 fs::write(object_path, compressed)?;
