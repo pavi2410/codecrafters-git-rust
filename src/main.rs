@@ -4,6 +4,8 @@ use std::fs::File;
 use std::path::Path;
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
+use flate2::write::ZlibEncoder;
+use flate2::Compression;
 use anyhow::Result;
 use sha1::{Sha1, Digest};
 
@@ -71,8 +73,12 @@ fn main() -> Result<()> {
                 let (dir, file) = sha.split_at(2);
                 let object_path = Path::new(format!(".git/objects/{}/{}", dir, file));
                 fs::create_dir_all(object_path.parent().unwrap())?;
-                let mut file = File::create(object_path)?;
-                file.write_all(&content[..])?;
+
+                let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
+                e.write_all(&content[..])?;
+                let compressed = e.finish()?; 
+                
+                fs.write(object_path, compressed)?;
             }
         }
     }
