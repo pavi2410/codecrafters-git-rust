@@ -1,3 +1,4 @@
+use std::io::prelude::*;
 use std::fs;
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
