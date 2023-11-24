@@ -101,13 +101,11 @@ fn main() -> Result<()> {
             let (dir, file) = tree_sha.split_at(2);
             let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
 
-            println!("{:#?}", object);
-
             let mut z = ZlibDecoder::new(&object[..]);
             let mut s = String::new();
             z.read_to_string(&mut s)?;
 
-            println!("{}", s);
+            println!("{:#?}", s);
         }
     }
 
