@@ -36,7 +36,7 @@ fn main() -> Result<()> {
             println!("Initialized git directory");
         }
 
-        Commands::CatFile { print, blob_sha } => {
+        Commands::CatFile { print: _, blob_sha } => {
             let object = fs::read(format!(".git/objects/{}", blob_sha))?;
 
             let mut z = ZlibDecoder::new(&object[..]);
