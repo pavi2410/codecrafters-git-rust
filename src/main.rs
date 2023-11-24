@@ -3,6 +3,7 @@ use std::fs;
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
 use anyhow::Result;
+use sha1::{Sha1, Digest};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -21,6 +22,14 @@ enum Commands {
 
         #[clap(required = true)]
         blob_sha: String,
+    },
+
+    HashObject {
+        #[arg(short)]
+        write: bool,
+
+        #[clap(required = true)]
+        filename: String,
     }
 }
 
@@ -45,6 +54,22 @@ fn main() -> Result<()> {
             z.read_to_string(&mut s)?;
 
             print!("{}", s.split('\x00').nth(1).unwrap());
+        }
+
+        Commands::HashObject { write, filename } => {
+            let content = fs::read(filename)?;
+
+            let mut hasher = Sha1::new();
+            hasher.update(&content[..]);
+            let sha = hasher.finalize();
+
+            println!("{}", sha);
+
+            if write {
+                let (dir, file) = sha.split_at(2);
+                let mut file = File::new(format!(".git/objects/{}/{}", dir, file))?;
+                file.write_all(&content[..]);
+            }
         }
     }
 
