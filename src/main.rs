@@ -105,7 +105,9 @@ fn main() -> Result<()> {
             // let mut s = String::new();
             // z.read_to_string(&mut s)?;
 
-            println!("{}", object.split('\0').nth(0).unwrap());
+            for c in object.chars() {
+                print!("{}", c);
+            }
         }
     }
 
