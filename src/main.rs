@@ -70,7 +70,8 @@ fn main() -> Result<()> {
 
             if write {
                 let (dir, file) = sha.split_at(2);
-                let object_path = Path::new(&format!(".git/objects/{}/{}", dir, file));
+                let object_filename = format!(".git/objects/{}/{}", dir, file);
+                let object_path = Path::new(&object_filename);
                 fs::create_dir_all(object_path.parent().unwrap())?;
 
                 let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
