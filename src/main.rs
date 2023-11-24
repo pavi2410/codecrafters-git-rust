@@ -78,7 +78,7 @@ fn main() -> Result<()> {
                 e.write_all(&content[..])?;
                 let compressed = e.finish()?; 
                 
-                fs.write(object_path, compressed)?;
+                fs::write(object_path, compressed)?;
             }
         }
     }
