@@ -68,7 +68,7 @@ fn main() -> Result<()> {
 
             if write {
                 let (dir, file) = sha.split_at(2);
-                let mut file = File::new(format!(".git/objects/{}/{}", dir, file))?;
+                let mut file = File::create(format!(".git/objects/{}/{}", dir, file))?;
                 file.write_all(&content[..]);
             }
         }
