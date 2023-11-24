@@ -105,7 +105,9 @@ fn main() -> Result<()> {
             let mut s = Vec::new();
             z.read_to_end(&mut s)?;
 
-            print!("{:#?}", s);
+            for line in s.split(|&c| c == 0) {
+              println!("{}", String::from_utf8_lossy(line));  
+            }
         }
     }
 
