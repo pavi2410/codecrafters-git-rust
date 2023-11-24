@@ -102,10 +102,10 @@ fn main() -> Result<()> {
             let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
 
             let mut z = ZlibDecoder::new(&object[..]);
-            let mut s = String::new();
-            z.read_to_string(&mut s)?;
+            let mut s = Vec::new();
+            z.read_to_end(&mut s)?;
 
-            print!("{}", s.split('\x00').nth(0).unwrap());
+            print!("{:#?}", s);
         }
     }
 
