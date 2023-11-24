@@ -1,6 +1,6 @@
 use std::io::prelude::*;
 use std::fs;
-use std::fs::File;
+use std::fs::{File, Path};
 use clap::{Parser, Subcommand};
 use flate2::read::ZlibDecoder;
 use anyhow::Result;
@@ -68,7 +68,9 @@ fn main() -> Result<()> {
 
             if write {
                 let (dir, file) = sha.split_at(2);
-                let mut file = File::create(format!(".git/objects/{}/{}", dir, file))?;
+                let object_path = Path::new(format!(".git/objects/{}/{}", dir, file));
+                fs::create_dir_all(object_path.parent().unwrap())?;
+                let mut file = File::create(object_path)?;
                 file.write_all(&content[..])?;
             }
         }
