@@ -7,7 +7,7 @@ use flate2::read::ZlibDecoder;
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
-    command: Option<Commands>,
+    command: Commands,
 }
 
 #[derive(Subcommand)]
@@ -26,7 +26,7 @@ enum Commands {
 fn main() {
     let cli = Cli::parse();
 
-    match &cli.command {
+    match cli.command {
         Commands::Init => {
             fs::create_dir(".git").unwrap();
             fs::create_dir(".git/objects").unwrap();
