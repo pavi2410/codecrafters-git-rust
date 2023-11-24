@@ -46,4 +46,6 @@ fn main() -> Result<()> {
             print!("{s}");
         }
     }
+
+    Ok(())
 }
