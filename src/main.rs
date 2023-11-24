@@ -96,9 +96,15 @@ fn main() -> Result<()> {
             }
         }
 
-        Commands::LsTree { name_only, tree_sha } => {
-            dbg!(name_only);
-            dbg!(tree_sha);
+        Commands::LsTree { name_only: _, tree_sha } => {
+            let (dir, file) = tree_sha.split_at(2);
+            let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
+
+            let mut z = ZlibDecoder::new(&object[..]);
+            let mut s = String::new();
+            z.read_to_string(&mut s)?;
+
+            println!("{}", s);
         }
     }
 
