@@ -37,7 +37,8 @@ fn main() -> Result<()> {
         }
 
         Commands::CatFile { print: _, blob_sha } => {
-            let object = fs::read(format!(".git/objects/{}", blob_sha))?;
+            let (dir, file) = blob_sha.split_at(2);
+            let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
 
             let mut z = ZlibDecoder::new(&object[..]);
             let mut s = String::new();
