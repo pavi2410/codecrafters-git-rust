@@ -92,7 +92,7 @@ fn parse_tree_entries(obj_content: Vec<u8>) -> Vec<TreeEntry> {
 
     while i < obj_content.len() {
         let mode = obj_content[i..i + 6].to_vec();
-        i += 6;
+        i += 7;
 
         let filename = {
             let mut filename = Vec::new();
