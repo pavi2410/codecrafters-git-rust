@@ -65,7 +65,7 @@ impl Object {
 
         let header = obj_file
             .by_ref()
-            .take_while(|c| *c != b' ')
+            .take_while(|c| *c != 0)
             .collect::<Vec<_>>();
 
         println!("Header = {:#?}", header);
