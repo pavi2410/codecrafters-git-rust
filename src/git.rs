@@ -63,20 +63,15 @@ impl Object {
     pub fn parse_from_file(sha: &str) -> Object {
         let mut obj_file = Self::read_object(sha).into_iter();
 
-        println!("obj_file: {:#?}", obj_file);
-
         let header = obj_file
             .by_ref()
+            .inspect(|c| println!("c: {:#?}", c))
             .take_while(|c| *c != 0)
             .collect::<Vec<_>>();
-
-        println!("header: {:#?}", header);
 
         let (obj_type, payload_size) = header.split_at(4);
         let payload_size = String::from_utf8(payload_size[1..].to_owned()).unwrap().parse::<usize>().unwrap(); 
         let payload = obj_file.by_ref().take(payload_size).collect::<Vec<_>>();
-
-        println!("payload: {:#?}", payload);
 
         match obj_type {
             b"blob" => {
@@ -96,13 +91,20 @@ fn parse_tree_entries(obj_content: Vec<u8>) -> Vec<TreeEntry> {
     let mut i = 0;
 
     while i < obj_content.len() {
-        let mode = obj_content[i..i + 6].to_vec();
-        i += 7;
+        // mode can be 5 or 6 bytes, followed by a space. we need to parse it accordingly
+        let mode = {
+            let mut mode = Vec::new();
+            while obj_content[i] != b' ' {
+                mode.push(obj_content[i]);
+                i += 1;
+            }
+            i += 1;
+            String::from_utf8(mode).unwrap()
+        };
 
         let filename = {
             let mut filename = Vec::new();
             while obj_content[i] != 0 {
-                println!("got {} at i = {i}", obj_content[i]);
                 filename.push(obj_content[i]);
                 i += 1;
             }
@@ -114,7 +116,7 @@ fn parse_tree_entries(obj_content: Vec<u8>) -> Vec<TreeEntry> {
         i += 20;
 
         entries.push(TreeEntry {
-            mode: String::from_utf8(mode).unwrap(),
+            mode,
             filename,
             sha: utils::sha_from_bytes(&sha),
         });
