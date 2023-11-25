@@ -1,15 +1,9 @@
 mod utils;
 mod git;
 
-use std::io::prelude::*;
 use std::fs;
-use std::path::Path;
 use clap::{Parser, Subcommand};
-use flate2::read::ZlibDecoder;
-use flate2::write::ZlibEncoder;
-use flate2::Compression;
 use anyhow::Result;
-use sha1::{Sha1, Digest};
 
 use crate::git::Object;
 
