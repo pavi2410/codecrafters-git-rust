@@ -72,7 +72,7 @@ impl Object {
 
         let (obj_type, payload_size) = header.split_at(4);
         println!("Payload size = {:#?}", payload_size);
-        let payload_size = String::from_utf8(payload_size.to_owned()).unwrap().parse::<usize>().unwrap(); 
+        let payload_size = String::from_utf8(payload_size[1..].to_owned()).unwrap().parse::<usize>().unwrap(); 
         let payload = obj_file.by_ref().take(payload_size).collect::<Vec<_>>();
 
         match obj_type {
