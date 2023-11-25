@@ -68,6 +68,8 @@ impl Object {
             .take_while(|c| *c != b' ')
             .collect::<Vec<_>>();
 
+        println!("Header = {:#?}", header);
+
         let (obj_type, payload_size) = header.split_at(4);
         println!("Payload size = {:#?}", payload_size);
         let payload_size = String::from_utf8(payload_size.to_owned()).unwrap().parse::<usize>().unwrap(); 
