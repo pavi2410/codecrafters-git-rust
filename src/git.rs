@@ -72,12 +72,13 @@ impl Object {
         let payload_size = String::from_utf8(payload_size[1..].to_owned()).unwrap().parse::<usize>().unwrap(); 
         let payload = obj_file.by_ref().take(payload_size).collect::<Vec<_>>();
 
+        println!("payload: {:#?}", payload);
+
         match obj_type {
             b"blob" => {
                 Object::Blob { data: payload }
             }
             b"tree" => {
-
                 let entries = parse_tree_entries(payload);
                 Object::Tree { entries }
             }
