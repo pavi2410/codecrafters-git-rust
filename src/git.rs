@@ -65,7 +65,6 @@ impl Object {
 
         let header = obj_file
             .by_ref()
-            .inspect(|c| println!("c: {:#?}", c))
             .take_while(|c| *c != 0)
             .collect::<Vec<_>>();
 
