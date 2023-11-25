@@ -1,5 +1,7 @@
+mod utils;
+mod git;
+
 use std::io::prelude::*;
-use std::io::{BufReader, BufRead};
 use std::fs;
 use std::path::Path;
 use clap::{Parser, Subcommand};
@@ -8,6 +10,8 @@ use flate2::write::ZlibEncoder;
 use flate2::Compression;
 use anyhow::Result;
 use sha1::{Sha1, Digest};
+
+use crate::git::Object;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -58,55 +62,33 @@ fn main() -> Result<()> {
         }
 
         Commands::CatFile { print: _, blob_sha } => {
-            let (dir, file) = blob_sha.split_at(2);
-            let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
+            let obj = Object::read_object(&blob_sha);
 
-            let mut z = ZlibDecoder::new(&object[..]);
-            let mut s = String::new();
-            z.read_to_string(&mut s)?;
-
-            print!("{}", s.split('\x00').nth(1).unwrap());
+            print!("{}", String::from_utf8_lossy(&obj).split('\0').nth(1).unwrap());
         }
 
         Commands::HashObject { write, filename } => {
-            let mut content = fs::read(filename)?;
+            let content = fs::read(filename)?;
 
-            let blob = {
-                let mut l1 = format!("blob {}\0", content.len()).as_bytes().to_vec();
-                l1.append(&mut content);
-                l1
-            };
+            let blob = Object::Blob { data: content };
 
-            let mut hasher = Sha1::new();
-            hasher.update(&blob[..]);
-            let sha = hex::encode(hasher.finalize());
-
-            println!("{}", sha);
+            println!("{}", blob.sha());
 
             if write {
-                let (dir, file) = sha.split_at(2);
-                let object_filename = format!(".git/objects/{}/{}", dir, file);
-                let object_path = Path::new(&object_filename);
-                fs::create_dir_all(object_path.parent().unwrap())?;
-
-                let mut e = ZlibEncoder::new(Vec::new(), Compression::default());
-                e.write_all(&blob[..])?;
-                let compressed = e.finish()?; 
-                
-                fs::write(object_path, compressed)?;
+                blob.write_object();
             }
         }
 
         Commands::LsTree { name_only: _, tree_sha } => {
-            let (dir, file) = tree_sha.split_at(2);
-            let object = fs::read(format!(".git/objects/{}/{}", dir, file))?;
+            let obj = Object::parse_from_file(&tree_sha);
 
-            let mut z = ZlibDecoder::new(&object[..]);
-            let mut s = Vec::new();
-            z.read_to_end(&mut s)?;
-
-            for line in s.split(|&c| c == 0) {
-              println!("{}", String::from_utf8_lossy(line));  
+            match obj {
+                Object::Tree { entries } => {
+                    for entry in entries {
+                        println!("{}", entry.filename);
+                    }
+                }
+                _ => panic!("Not a tree object"),
             }
         }
     }
