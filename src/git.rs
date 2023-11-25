@@ -97,6 +97,7 @@ fn parse_tree_entries(obj_content: Vec<u8>) -> Vec<TreeEntry> {
         let filename = {
             let mut filename = Vec::new();
             while obj_content[i] != 0 {
+                println!("got {} at i = {i}", obj_content[i]);
                 filename.push(obj_content[i]);
                 i += 1;
             }
